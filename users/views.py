@@ -66,7 +66,7 @@ def favorites(request):
     if request.user.user_type != 'seeker':
         return redirect('main:index')
 
-    # TODO: добавить модель Favorite позже
+
     context = {
         'favorites': [],
         'title': 'Избранное'
