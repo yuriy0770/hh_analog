@@ -84,7 +84,6 @@
 
 При регистрации нового пользователя автоматически создается профиль:
 
-```python
 @receiver(post_save, sender=CustomUsers)
 def create_profile(sender, instance, created, **kwargs):
     if created:
