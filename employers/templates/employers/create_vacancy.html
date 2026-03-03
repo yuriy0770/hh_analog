@@ -1,0 +1,72 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">📝 Создание вакансии</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label>Название вакансии *</label>
+                            <input type="text" name="title" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Описание *</label>
+                            <textarea name="description" class="form-control" rows="5" required></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Город *</label>
+                                <input type="text" name="city" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Зарплата</label>
+                                <input type="number" name="salary" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Тип занятости</label>
+                                <select name="work_type" class="form-select">
+                                    {% for value, label in work_types %}
+                                    <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Опыт</label>
+                                <select name="experience" class="form-select">
+                                    {% for value, label in experiences %}
+                                    <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Категория</label>
+                            <select name="category" class="form-select" required>
+                                <option value="">-- Выберите категорию --</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Создать вакансию</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

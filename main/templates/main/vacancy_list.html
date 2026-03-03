@@ -1,0 +1,140 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Фильтры слева -->
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">🔍 Фильтры</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Категория</label>
+                            <select name="category" class="form-select">
+                                <option value="">Все категории</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat.slug }}" {% if request.GET.category == cat.slug %}selected{% endif %}>
+                                        {{ cat.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Город</label>
+                            <select name="city" class="form-select">
+                                <option value="">Все города</option>
+                                {% for city in cities %}
+                                    <option value="{{ city }}" {% if request.GET.city == city %}selected{% endif %}>
+                                        {{ city }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Тип работы</label>
+                            <select name="work_type" class="form-select">
+                                <option value="">Все</option>
+                                {% for value, label in work_types %}
+                                    <option value="{{ value }}" {% if request.GET.work_type == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            Применить фильтры
+                        </button>
+                        <a href="{% url 'main:vacancy_list' %}" class="btn btn-outline-secondary w-100 mt-2">
+                            Сбросить
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Список вакансий справа -->
+        <div class="col-md-9">
+            <h2 class="mb-4">Вакансии</h2>
+            
+            {% if vacancies %}
+                {% for vacancy in vacancies %}
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">
+                                    <a href="{% url 'main:vacancy_detail' vacancy.slug %}" class="text-decoration-none">
+                                        {{ vacancy.title }}
+                                    </a>
+                                </h5>
+                                <span class="badge {% if vacancy.work_type == 'remote' %}bg-success{% else %}bg-primary{% endif %}">
+                                    {{ vacancy.get_work_type_display }}
+                                </span>
+                            </div>
+                            
+                            <p class="card-text text-muted mb-2">
+                                💼 {{ vacancy.company.name|default:'Компания не указана' }} • 
+                                📍 {{ vacancy.city }} • 
+                                💰 {% if vacancy.salary %}{{ vacancy.salary }} ₽{% else %}з/п не указана{% endif %}
+                            </p>
+                            
+                            <p class="card-text">{{ vacancy.short_description }}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    🕒 {{ vacancy.created_at|timesince }} назад
+                                </small>
+                                <a href="{% url 'main:vacancy_detail' vacancy.slug %}" class="btn btn-sm btn-outline-primary">
+                                    Подробнее →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                
+                <!-- Пагинация -->
+                {% if is_paginated %}
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.city %}&city={{ request.GET.city }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}">
+                                        ←
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ num }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.city %}&city={{ request.GET.city }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.city %}&city={{ request.GET.city }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}">
+                                        →
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+                
+            {% else %}
+                <div class="alert alert-info">
+                    Вакансий не найдено
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% endif %}
+                    
+                    <h4>{{ profile.user.username }}</h4>
+                    <p class="text-muted">
+                        {% if profile.user.user_type == 'employer' %}
+                            👔 Работодатель
+                        {% else %}
+                            🔍 Соискатель
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">📋 Информация о профиле</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th style="width: 30%;">Имя пользователя:</th>
+                            <td>{{ profile.user.username }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{{ profile.user.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Телефон:</th>
+                            <td>{{ profile.user.phone|default:"Не указан" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Город:</th>
+                            <td>{{ profile.city|default:"Не указан" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Дата рождения:</th>
+                            <td>{{ profile.birth_date|default:"Не указана" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Тип аккаунта:</th>
+                            <td>
+                                {% if profile.user.user_type == 'employer' %}
+                                    <span class="badge bg-info">👔 Работодатель</span>
+                                {% else %}
+                                    <span class="badge bg-success">🔍 Соискатель</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="" class="btn btn-primary">
+                            ✏️ Редактировать профиль
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

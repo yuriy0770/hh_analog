@@ -1,0 +1,62 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">📋 Мои отклики</h1>
+
+    {% if applications %}
+        <div class="row">
+            {% for app in applications %}
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm {% if app.status == 'accepted' %}border-success{% elif app.status == 'rejected' %}border-danger{% endif %}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">
+                                    <a href="{% url 'main:vacancy_detail' app.vacancy.slug %}">
+                                        {{ app.vacancy.title }}
+                                    </a>
+                                </h5>
+                                <span class="badge
+                                    {% if app.status == 'pending' %}bg-warning
+                                    {% elif app.status == 'accepted' %}bg-success
+                                    {% elif app.status == 'rejected' %}bg-danger
+                                    {% endif %}">
+                                    {{ app.get_status_display }}
+                                </span>
+                            </div>
+
+                            <p class="card-text">
+                                💼 {{ app.vacancy.company.name|default:'Компания не указана' }}<br>
+                                📍 {{ app.vacancy.city }}<br>
+                                💰 {% if app.vacancy.salary %}{{ app.vacancy.salary }} ₽{% else %}з/п не указана{% endif %}
+                            </p>
+
+                            {% if app.cover_letter %}
+                                <div class="mt-2 p-2 bg-light rounded">
+                                    <small><strong>Сопроводительное:</strong> {{ app.cover_letter|truncatewords:20 }}</small>
+                                </div>
+                            {% endif %}
+
+                            <p class="text-muted small mt-2">
+                                Отклик отправлен: {{ app.created_at|date:"d.m.Y H:i" }}
+                            </p>
+
+                            <a href="{% url 'main:vacancy_detail' app.vacancy.slug %}" class="btn btn-sm btn-outline-primary">
+                                Посмотреть вакансию
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <p>У вас пока нет откликов</p>
+            <a href="{% url 'main:vacancy_list' %}" class="btn btn-primary">
+                🔍 Найти вакансии
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

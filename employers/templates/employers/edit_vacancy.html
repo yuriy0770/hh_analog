@@ -1,0 +1,85 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">✏️ Редактирование вакансии</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Название вакансии</label>
+                            <input type="text" name="title" class="form-control" value="{{ vacancy.title }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Описание вакансии</label>
+                            <textarea name="description" class="form-control" rows="8" required>{{ vacancy.description }}</textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Город</label>
+                                <input type="text" name="city" class="form-control" value="{{ vacancy.city }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Зарплата</label>
+                                <input type="number" name="salary" class="form-control" value="{{ vacancy.salary|default:'' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Тип занятости</label>
+                                <select name="work_type" class="form-select" required>
+                                    {% for value, label in work_types %}
+                                        <option value="{{ value }}" {% if vacancy.work_type == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Опыт работы</label>
+                                <select name="experience" class="form-select" required>
+                                    {% for value, label in experiences %}
+                                        <option value="{{ value }}" {% if vacancy.experience == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Категория</label>
+                            <select name="category" class="form-select" required>
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if vacancy.category.id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" name="is_active" class="form-check-input" id="is_active" {% if vacancy.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="is_active">Вакансия активна</label>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'employers:dashboard' %}" class="btn btn-secondary">
+                                Отмена
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                💾 Сохранить изменения
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

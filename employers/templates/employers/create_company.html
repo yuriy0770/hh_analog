@@ -1,0 +1,49 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">🏢 Создание компании</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Название компании *</label>
+                            <input type="text" name="name" class="form-control" required>
+                            <small class="text-muted">Например: ООО "Рога и копыта"</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Описание компании *</label>
+                            <textarea name="description" class="form-control" rows="5" required></textarea>
+                            <small class="text-muted">Расскажите о компании, сфере деятельности, преимуществах</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Логотип</label>
+                            <input type="file" name="logo" class="form-control" accept="image/*">
+                            <small class="text-muted">Загрузите логотип компании (необязательно)</small>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'employers:dashboard' %}" class="btn btn-secondary">
+                                Отмена
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                ✅ Создать компанию
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

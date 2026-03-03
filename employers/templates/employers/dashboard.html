@@ -1,0 +1,155 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">👔 Панель работодателя</h1>
+
+            <!-- Статистика -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <h5 class="card-title">Всего вакансий</h5>
+                            <h2>{{ total_vacancies }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h5 class="card-title">Активных</h5>
+                            <h2>{{ active_vacancies }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <h5 class="card-title">Всего откликов</h5>
+                            <h2>0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <h5 class="card-title">Просмотров</h5>
+                            <h2>0</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Информация о компании -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">🏢 Моя компания</h5>
+                    <a href="{% url 'employers:edit_company' %}" class="btn btn-light btn-sm">
+                        ✏️ Редактировать
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2 text-center">
+                            {% if company.logo %}
+                            <img src="{{ company.logo.url }}" class="img-fluid rounded" style="max-height: 100px;">
+                            {% else %}
+                            <div class="bg-light p-3 rounded">
+                                <span style="font-size: 3rem;">🏢</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-10">
+                            <h4>{{ company.name }}</h4>
+                            <p>{{ company.description|truncatewords:50 }}</p>
+                            <small class="text-muted">Создана: {{ company.created_at|date:"d.m.Y" }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вакансии компании -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">📋 Мои вакансии</h5>
+                    <a href="{% url 'employers:create_vacancy' %}" class="btn btn-light btn-sm">
+                        ➕ Новая вакансия
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if vacancies %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Город</th>
+                                <th>Тип</th>
+                                <th>Опыт</th>
+                                <th>Зарплата</th>
+                                <th>Статус</th>
+                                <th>Отклики</th>
+                                <th>Действия</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for vacancy in vacancies %}
+                            <tr>
+                                <td>
+                                    {% if vacancy.slug and vacancy.slug != '' %}
+                                    <a href="{% url 'main:vacancy_detail' vacancy.slug %}" target="_blank">
+                                        {{ vacancy.title }}
+                                    </a>
+                                    {% else %}
+                                    {{ vacancy.title }}
+                                    <small class="text-muted">(ссылка временно недоступна)</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ vacancy.city }}</td>
+                                <td>{{ vacancy.get_work_type_display }}</td>
+                                <td>{{ vacancy.get_experience_display }}</td>
+                                <td>{% if vacancy.salary %}{{ vacancy.salary }} ₽{% else %}-{% endif %}</td>
+                                <td>
+                                    {% if vacancy.is_active %}
+                                    <span class="badge bg-success">Активно</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Неактивно</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">0</span> <!-- TODO: счетчик откликов -->
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'employers:edit_vacancy' vacancy.id %}"
+                                           class="btn btn-outline-primary" title="Редактировать">
+                                            ✏️
+                                        </a>
+                                        <a href="{% url 'employers:vacancy_applications' vacancy.id %}"
+                                           class="btn btn-outline-info" title="Отклики">
+                                            👥
+                                        </a>
+                                        <button class="btn btn-outline-danger" title="Удалить">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        У вас пока нет вакансий.
+                        <a href="{% url 'employers:create_vacancy' %}">Создать первую вакансию</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
